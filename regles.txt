@@ -1,0 +1,19 @@
+Au chaque connexion, on doit demander une adresse IP, celle ci sera attribuée en fonction de la disponibilité...
+En fonction du réseau auquel on appartient, on sera connecté a tel ou tel imprimante...
+Il y a aussi les routeurs, ainsi que les téléphone.
+
+Un client (un onglet dans le navigateur),  est juste un ordinateur, qui entre un nom d'hôte, ensuite une adresse IP lui est assignée...
+Ce client peut ensuite, pinger les autres ordinateur, chatter...
+Mais aussi téléphoner (en simulation), lancer des impression (en simulation)
+
+On peut aussi choisir un avatar au début... Parmi une liste... (est-ce possible de faire ça dans une prompt ?)
+Ou bien possibilité d'éditer profil...
+
+Ce qui voudrait dire qu'au moment de démarrer le serveur, on initialise le routeur , les appareils déjà connectés 
+(camera, téléphones, serveurs), et ainsi qu'une liste adresse disponibles (faut donc un Gateway)
+
+Le construire par dessus le chat...
+
+Chaque utilisateur a plusieurs action (sendPM, call)
+
+On peut se connecter en tant qu'admin, faut entrer un login et password. Et une fois fait, on peut avoir accees aux infos du serveur app.js (adresses ip utilisees, nicknames, ID... cameras de surveillance...)

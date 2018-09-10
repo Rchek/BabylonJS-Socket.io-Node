@@ -1,0 +1,136 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    
+	<link rel="stylesheet" type="text/css" href="./css/styles.css"  >
+  </head>
+  <body>
+    <ul id="messages"></ul>
+	<ul id="whois-online"></ul>
+ 
+	<div id="typing-info" /> </div>
+    <form action="">
+      <input id="m" autocomplete="off" /> <button>Send</button>
+    </form>
+
+  <script src="/socket.io/socket.io.js"  ></script>
+  <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+  <script>
+	var socket = io();
+	var nickname=prompt("what is your nickname ? ");
+	socket.emit('newuser' , nickname);
+	var mySocketId="none";
+	
+	
+	//When I submit, I emit a "chat message event"
+	$("form").submit(function(){
+		socket.emit('chat message' , new Array($('#m').val(), nickname) );
+		//empty field...
+		$('#m').val('');
+		//$('#nickname').val('');
+		return false;
+	});
+	//When I type, I submit a keyboard event
+	$("#m").keyup(function(e){
+		console.log("keyuyp event triggered");
+		socket.emit("typing", nickname);
+	
+	});
+	
+	//What I get from the TYPING function 
+	socket.on('typing',function(msg){
+		$("#typing-info").html("<div class='inside-text'>"+msg+"</div>");
+	
+	});
+	
+	
+	//What I get from the EMIT function 
+	socket.on('chat message',function(msg){
+	console.log("add new message to DOM");
+		$('#messages').append($('<li>').text(msg[1] + " says " + msg[0]));
+	});
+	
+	/*
+	socket.on('disconnect',function( ){
+		 $('#messages').append($('<li>').text(nickname   + "just disconnected "));
+		//socket.emit("user-gone", nickname);
+		console.log("disconnect on client  side");
+	});
+	*/
+	
+	 socket.on('user-gone',function(nick){
+		 $('#messages').append($('<li>').text(nick + " is gone :-( "));
+	}); 
+	
+	//If I close tab -> so, if I disconnect
+	window.onbeforeunload = function () {
+		//socket.emit("user-gone", nickname);
+		var goneObj={nickname:nickname, socketId: mySocketId};
+		//alert("before I emit = socket id is " + goneObj.socketId);
+		socket.emit("user-gone", goneObj);
+		return null;
+		//return "Do you really want to close?";
+	};
+	
+	socket.on('newuser',function(msg){
+		$('#messages').append($('<li>').text(msg + " just connected"));
+	});
+	
+	socket.on('update-users',function(arrayOfUsers){
+	//console.log("users are " + arrayOfUsers);
+	console.log("users are " + JSON.stringify(arrayOfUsers )); 
+	//Add user to the list
+	//Erase arrayOfUsers
+	$('#whois-online').html("");
+ 
+	for(var i=0;i<=arrayOfUsers.users.length-1;i++){
+		//console.log("new user is " + arrayOfUsers[i]);
+		$('#whois-online').append($('<li id='+arrayOfUsers.users[i].nickname+' data-subnet='+arrayOfUsers.users[i].subnetNumber+' data-hostnum='+arrayOfUsers.users[i].hostNumber+' >').text(arrayOfUsers.users[i].nickname + " -- " + arrayOfUsers.users[i].ipadress));
+		if(nickname==arrayOfUsers.users[i].nickname ){
+			$("#"+arrayOfUsers.users[i].nickname+"").addClass("active-user");
+			//Update the global variable "SocketId"
+			mySocketId=arrayOfUsers.users[i].socketId;
+		}
+		else{
+			$('#whois-online').append($('<button class="send-private-msg" id='+arrayOfUsers.users[i].nickname+'>').text("Send PM"));
+		}
+	}
+	});
+			//Envoyer message prive...
+			//When I submit, I emit a "chat message event"
+			$('body').on('click', '.send-private-msg',function(e){
+			//$('.send-private-msg').on('click', function(e){
+			//$('#messages').on('click', function(){
+			var privateMsg=prompt("Send message to " + $(this).attr("id"));
+			if(privateMsg){
+				var privateData= Array(nickname, privateMsg , $(this).attr("id"));
+				socket.emit("sendPM", privateData);
+			}		
+		});
+	//WHEN I RECEIVE A PM (but only to the right person...)
+	socket.on("sendPM", function(pmObj){
+		alert(pmObj);
+	});
+	
+	 //If the room is fulle (no more IP adress) or if the nickname is already taken
+	 socket.on("roomError", function(errorObj){
+	 //alert(JSON.stringify(errorObj));
+	 mySocketId=errorObj.userData[0].socketId;
+	 alert( errorObj.userData[0].message);
+	 // alert("my socket is " + mySocketId);
+	});
+
+	//If I close tab -> so, if I disconnect
+	window.onbeforeunload = function () {
+		//socket.emit("user-gone", nickname);
+		var goneObj={nickname:nickname, socketId: mySocketId};
+		//alert("before I emit = socket id is " + goneObj.socketId);
+		socket.emit("user-gone", goneObj);
+		return null;
+		//return "Do you really want to close?";
+	};
+	
+  </script>
+  </body>
+</html>

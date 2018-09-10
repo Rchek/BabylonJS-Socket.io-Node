@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+  <head>
+  <title>Socket.IO chat</title>
+  <link rel="stylesheet" type="text/css" href="./css/styles.css">
+  <link rel="stylesheet" type="text/css" href="./css/arena.css" />
+  </head>
+  <body>
+    <ul id="messages"></ul>
+	<ul id="whois-online"></ul>
+	<div class="arena">
+	<div id="character">
+			<div id="foot-hit-block" class="objectHittestImg"></div>
+	</div>
+	<div class="bots">	
+	</div>
+   <!-- 
+	Ajouter un personnage a chaque connection
+	Le tableau des utilisateurs, renvoie des informations sur leur position actuelle, ainsi que leur orientation. Quand on appui le clavier, on envoie des informations sur leur frame actuelle...
+   -->
+  </div>
+  <script src="/socket.io/socket.io.js"  ></script>
+  <!--<script src="http://code.jquery.com/jquery-1.11.1.js"></script>-->
+   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+   <script src="/js/charHandler.js"  ></script>
+   <script>
+	var socket = io();
+	var nickname=prompt("what is your nickname ? ");
+	//var nickname="nonick";
+	socket.emit('newuser' , nickname);
+	$("#character").append($("<span class='label'>"+nickname+"</span>"));
+	var mySocketId="none";
+	socket.on('user-gone',function(nick){
+		 $('#messages').append($('<li>').text(nick + " is gone :-( "));
+	}); 
+	//If I close tab -> so, if I disconnect
+	window.onbeforeunload = function () {
+		//socket.emit("user-gone", nickname);
+		var goneObj={nickname:nickname, socketId: mySocketId};
+		//alert("before I emit = socket id is " + goneObj.socketId);
+		socket.emit("user-gone", goneObj);
+		return null;
+		//return "Do you really want to close?";
+	};
+	socket.on('newuser',function(msg){
+		$('#messages').append($('<li>').text(msg + " just connected"));
+	});
+	/*
+	Every frame I must update what's going on in the arena, so the position oif the enemies..
+	*/
+	socket.on('update-users',function(arrayOfUsers){
+	//Here I must add a character, with character class... and its specific ID to selected a different background-image
+	//console.log("users are " + arrayOfUsers);
+	console.log("users are " + JSON.stringify(arrayOfUsers )); 
+	//Add user to the list
+	//Erase arrayOfUsers
+	$('#whois-online').html("");
+ 	$(".bots").html("");
+	for(var i=0;i<=arrayOfUsers.users.length-1;i++){
+		//console.log("new user is " + arrayOfUsers[i]);
+		$('#whois-online').append($('<li id='+arrayOfUsers.users[i].nickname+' data-subnet='+arrayOfUsers.users[i].subnetNumber+' data-hostnum='+arrayOfUsers.users[i].hostNumber+' >').text(arrayOfUsers.users[i].nickname + " -- " + arrayOfUsers.users[i].ipadress));
+		//Erase the bots
+		if(nickname==arrayOfUsers.users[i].nickname ){
+			//Update his charac name
+			console.log("update character with " + arrayOfUsers.users[i].charName );
+			$("#character").attr( "data-charname" , arrayOfUsers.users[i].charName);
+			console.log("the charname is now " + $("#character").data("charname"));
+			$("#"+arrayOfUsers.users[i].nickname+"").addClass("active-user");
+			//Update the global variable "SocketId"
+			mySocketId=arrayOfUsers.users[i].socketId;
+		}
+		else{
+			$('#whois-online').append($('<button class="send-private-msg" id='+arrayOfUsers.users[i].nickname+'>').text("Send PM"));
+			//Add the bots...
+			var botTemplate='<div class="bot" data-charname="'+ arrayOfUsers.users[i].charName+'"><span class="label">'+arrayOfUsers.users[i].nickname+'</span></div>'
+			$(".bots").append($(botTemplate));
+			//$(".bots .bot").data
+			$(".bots .bot[data-charname='"+arrayOfUsers.users[i].charName+"']").css({left:arrayOfUsers.users[i].xPosition, top:arrayOfUsers.users[i].yPosition}).attr("class" , "bot "+arrayOfUsers.users[i].orientation+"");
+		}
+	}
+	});
+	//Envoyer message prive...
+	//When I submit, I emit a "chat message event"
+		$('body').on('click', '.send-private-msg',function(e){
+		var privateMsg=prompt("Send message to " + $(this).attr("id"));
+		if(privateMsg){
+			var privateData= Array(nickname, privateMsg , $(this).attr("id"));
+			socket.emit("sendPM", privateData);
+		}		
+	});
+	//WHEN I RECEIVE A PM (but only to the right person...)
+	socket.on("sendPM", function(pmObj){
+		alert(pmObj);
+	});
+	 //If the room is fulle (no more IP adress) or if the nickname is already taken
+	 socket.on("roomError", function(errorObj){
+	 mySocketId=errorObj.userData[0].socketId;
+	 alert( errorObj.userData[0].message);
+	});
+	
+	//update other bots positions
+	socket.on("update-positions", function(usersObj){
+		for(var i=0;i<=usersObj.users.length-1;i++){
+			$(".bots .bot[data-charname='"+usersObj.users[i].charName+"']").css({left:usersObj.users[i].xPosition, top:usersObj.users[i].yPosition}).attr("class" , "bot "+usersObj.users[i].orientation+"");	
+		}
+	});
+  </script>
+  </body>
+</html>

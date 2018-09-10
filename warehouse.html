@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO Rooms</title>
+	<link rel="stylesheet" type="text/css" href="./css/styles.css"  >
+	<!-- Include foundation 6 -->
+	<link rel="stylesheet" type="text/css" href="css/foundation.css" />
+    <link rel="stylesheet" type="text/css" href="css/app.css" />
+  </head>
+  <body>
+	Ok welcome to the warehouse, here are the available items...
+<div class="container row">
+<ul class="items columns large-6">
+<li class="item">
+Item a
+</li>
+<li class="item">
+Item b
+</li>
+</ul>
+ 
+ 
+
+
+ 
+<ul class="orders columns large-6">
+<li class="order">
+Order 1
+</li>
+<li class="order">
+Order 2
+</li>
+<li class="order">
+Order 3
+</li>
+</ul>
+
+</div>
+
+<!--
+There's a list of coming orders...
+I have a button to confirm the order.
+But before I must check the stock...
+If I risk to be out of stock, I can either delay the order (I just wait, or send a notification, out of stock, or I can decline for a specific reason...)  
+  -->
+<script src="/socket.io/socket.io.js"  ></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+
+<script>
+socket=io();
+socket.on('update-stock',function(stocks){
+			console.log(JSON.stringify(stocks));
+});
+</script>
+
+</body>
+</html>

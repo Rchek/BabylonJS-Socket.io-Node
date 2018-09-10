@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="utf-8"/>
+    <title>Babylon - Getting Started</title>
+    <!--- link to the last version of babylon --->
+	<script src="/socket.io/socket.io.js"  ></script>
+    <script src="http://www.babylonjs.com/babylon.js"></script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+	
+	
+    <style>
+        html, body {
+            overflow: hidden;
+            width   : 100%;
+            height  : 100%;
+            margin  : 0;
+            padding : 0;
+        }
+
+        #renderCanvas {
+            width   : 100%;
+            height  : 100%;
+            touch-action: none;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+    <script>
+	var socket = io();
+	var nickname=prompt("what is your nickname ? ");
+	socket.emit('newuser' , nickname);
+	var mySocketId="none";
+ 
+	var sphere;
+	var camera ;
+	var currentKey;          //records the current key pressed
+	var TimerWalk;    
+	var charStep = 2;       //1=1st foot, 2=stand, 3=2nd foot, 4=stand
+	var charSpeed = 50; //how fast the character will move
+	var gap=15;
+	var rightOk=true;
+	var scene;
+
+        window.addEventListener('DOMContentLoaded', function(){
+            // get the canvas DOM element
+            var canvas = document.getElementById('renderCanvas');
+
+            // load the 3D engine
+            var engine = new BABYLON.Engine(canvas, true);
+
+            // createScene function that creates and return the scene
+            var createScene = function(){
+                // create a basic BJS Scene object
+                scene = new BABYLON.Scene(engine);
+                // create a FreeCamera, and set its position to (x:0, y:5, z:-10)
+                camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 10,-20), scene);
+				//camera = new BABYLON.FollowCamera("FollowCam", new BABYLON.Vector3(0, 5, -10), scene);
+                // attach the camera to the canvas
+               // camera.attachControl(canvas, true);
+				
+                // create a basic light, aiming 0,1,0 - meaning, to the sky
+                var light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0,0.1,0), scene);
+				//light.intensity=5;
+				
+
+                // create a built-in "sphere" shape; its constructor takes 5 params: name, width, depth, subdivisions, scene
+                sphere = BABYLON.Mesh.CreateSphere('sphere1', 16, 1, scene);
+				sphere.position.x=-5;
+				//camera.lockedtarget("sphere");
+				 // target the camera to scene origin
+                camera.setTarget(BABYLON.Vector3.Zero());
+                //camera.setTarget(sphere);
+				camera.lockedTarget=sphere;
+				
+				sphere.material = new BABYLON.StandardMaterial("texture1", scene);
+				sphere.material.diffuseColor = new BABYLON.Color3(1.0, 0.2, 0.7);
+				sphere.material.diffuseTexture = new BABYLON.Texture("texture_one.jpg", scene);
+
+                // move the sphere upward 1/2 of its height
+                sphere.position.y = 1;
+
+                // create a built-in "ground" shape; its constructor takes the same 5 params as the sphere's one
+                var ground = BABYLON.Mesh.CreateGround('ground1',20, 20, 2, scene);
+
+				ground.material = new BABYLON.StandardMaterial("texture2", scene);
+				//ground.material.diffuseTexture = new BABYLON.Texture("texture_one.jpg", scene);
+				ground.material.diffuseColor = new BABYLON.Color3(0.8, 0.8, 0.8);
+				//ground.material.diffuseTexture.uScale=3;
+				//ground.material.diffuseTexture.vScale=3;
+
+				//Animation
+				var animationBox = new BABYLON.Animation("myAnimation", "position.y", 30, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+				// An array with all animation keys
+				var keys = []; 
+
+				 //At the animation key 0, the value of scaling is "1"
+				 keys.push({
+				   frame: 0,
+				   value: 1,
+ 
+				 });
+
+				 //At the animation key 20, the value of scaling is "0.2"
+				 keys.push({
+				   frame: 50,
+				   value: 3
+				 });
+
+				 //At the animation key 100, the value of scaling is "1"
+				 keys.push({
+				   frame: 100,
+				   value: 1
+				 });
+				
+				animationBox.setKeys(keys);
+				sphere.animations.push(animationBox);
+				scene.beginAnimation(sphere, 0, 100, true);
+				 /*
+				 BABYLON.Animation.prototype.floatInterpolateFunction = function (startValue, endValue, gradient) {
+					 return startValue + (endValue - startValue) * gradient;
+					};
+				*/
+				//animationBox.CircleEase();
+                // return the created scene
+                return scene;
+				
+				//Change position with click for example...
+				//Regarder pour les collisions, sprites, etc...
+            }
+
+            // call the createScene function
+           scene = createScene();
+
+            // run the render loop
+            engine.runRenderLoop(function(){
+                scene.render();
+            });
+
+            // the canvas/window resize event handler
+            window.addEventListener('resize', function(){
+                engine.resize();
+            });
+        });
+		
+		
+		//Add users
+		socket.on('update-users',function(arrayOfUsers){
+				console.log("users are " + JSON.stringify(arrayOfUsers));
+				
+				//Make a loop of creations of all the avatars
+				
+				//Now add the sphere of the others users to the list...
+				  // create a built-in "sphere" shape; its constructor takes 5 params: name, width, depth, subdivisions, scene
+                var sphere = BABYLON.Mesh.CreateSphere('sphere-'+arrayOfUsers.users[0].nickname, 16, 1, scene);
+				sphere.position.x=Math.random()*10;
+				//camera.lockedtarget("sphere");
+				 // target the camera to scene origin
+           
+				
+				sphere.material = new BABYLON.StandardMaterial("texture1", scene);
+				sphere.material.diffuseColor = new BABYLON.Color3(1.0, 0.2, 0.7);
+                sphere.position.y = 1;
+				var camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 10,-20), scene);    
+				camera.setTarget(BABYLON.Vector3.Zero());
+                //camera.setTarget(sphere);
+				camera.lockedTarget=sphere;
+				//camera = new BABYLON.FollowCamera("FollowCam", new BABYLON.Vector3(0, 5, -10), scene);
+                // attach the camera to the canvas
+               // camera.attachControl(canvas, true);
+				
+                // create a basic light, aiming 0,1,0 - meaning, to the sky
+                var light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0,0.1,0), scene);
+				//light.intensity=5;
+				
+
+                // create a built-in "sphere" shape; its constructor takes 5 params: name, width, depth, subdivisions, scene
+                sphere = BABYLON.Mesh.CreateSphere('sphere-'+arrayOfUsers.users[0].nickname, 16, 1, scene);
+				sphere.position.x=-5;
+				//Make a babylon X and Babylon Y position...
+				
+		});
+		
+		
+		//Movement handler
+		$(document).keydown(function(e) {
+		if (!currentKey) {   
+		  //set the currentKey to the key that is down
+		  currentKey = e.keyCode;
+		  //console.log("the current key is "+ currentKey);
+				  //execute character movement function charWalk('direction')
+				  switch(e.keyCode) {
+					case 32: attackWeapon();    break;
+					case 38: charWalk('up');    break;
+					case 39: charWalk('right'); break;
+					case 40: charWalk('down');  break;
+					case 37: charWalk('left');  break;
+					//Key "1"
+					case 49: switchWeapon('#weapon-li-1');  break;
+					//Key "2"
+					case 50: switchWeapon('#weapon-li-2');  break;
+					//Key "3"
+					case 51: switchWeapon('#weapon-li-3');  break;
+					//Key "4"
+					case 52: 
+					e.preventDefault();     
+					e.stopPropagation();
+					switchWeapon('#weapon-li-4');  break;
+	 
+				  } 
+		}
+});
+		
+		//KeyUp Function
+		$(document).keyup(function(e){
+			//don't stop the walk if the player is pushing other buttons
+			//only stop the walk if the key that started the walk is released
+			if (e.keyCode == currentKey) {
+			  //set the currentKey to false, this will enable a new key to be pressed
+			  currentKey = false;
+			  //clear the walk timer
+			  clearInterval(TimerWalk);
+			  //finish the character's movement
+			 // $('#character').stop(true, true);
+			}
+		});
+		
+		
+		//Character Walk Function
+function charWalk(dir) {
+    //adjust from lang to code
+    if (dir == 'up') dir = 'front';
+    if (dir == 'down') dir = 'back';
+ 
+	lastDirection=dir;
+    //move the character
+    processWalk(dir);
+	
+	//setInterval (function1(){ function2(param)}, interval)
+	
+	//Interval needed when I keep the key pressed, so it keeps walking. Otherwise it will onlly do a step per pressure...
+    //set the interval timer to continually execute the function that moves the character
+    TimerWalk = setInterval(function() {
+			processWalk(dir);
+			//record the position...
+			 
+		} 
+		,charSpeed);
+}
+
+function processWalk(dir) {
+    //increment the charStep as we will want to use the next stance in the animation
+    //if the character is at the end of the animation, go back to the beginning
+	//console.log("firection is " + dir);
+    //move the char
+    //we will only want to move the character 32px (which is 1 unit) in any direction
+	//How far I want to push "back" when he hits a wall the character...
+	var var_top = 10;
+	//If the stairs are open...
+		// if(!collides.hits.length) {
+		switch(dir) {
+		case "front":
+		sphere.position.z += 0.4;
+		camera.position.z += 0.4;
+		break;
+		case "back":
+		sphere.position.z -= 0.4;
+		camera.position.z -= 0.4;
+		break;
+		case "right":
+		sphere.position.x += 0.4;
+		camera.position.x += 0.4;
+		break;
+		case "left":
+		sphere.position.x -= 0.4;
+		camera.position.x -= 0.4;
+		break;
+ 
+      }
+}
+    </script>
+</body>
+</html>

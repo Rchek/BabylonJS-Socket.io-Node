@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO Rooms</title>
+	<link rel="stylesheet" type="text/css" href="./css/styles.css"  >
+	<!-- Include foundation 6 -->
+	<link rel="stylesheet" type="text/css" href="css/foundation.css" />
+    <link rel="stylesheet" type="text/css" href="css/app.css" />
+  </head>
+<body>
+  <!--
+	So this is the customer....
+	He's got the same stocks as the warehouse...
+	It's is updated only if  the warehouse processes the order
+  -->
+
+<ul class="catalog row">
+	<li class="catalog-item columns large-3">
+	Item A
+	</li>
+	<li class="catalog-item columns large-3">
+	Item B
+	</li>
+	<li class="catalog-item columns large-3">
+	Item C
+	</li>
+	<li class="catalog-item columns large-3">
+	Item D
+	</li>
+</ul>
+  
+<script src="/socket.io/socket.io.js"  ></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+
+<script>
+socket.on('update-stock',function(stocks){
+console.log("here are the stocks " + );
+});
+</script>
+</body>
+</html>
+
+
+<!-- 
+how to make an order ???
+A list of items.
+utiliser les wtiches....
+Utiliser les sliders...
+On a des objets , sur chaque objet on a un sliders pour choisir la quantite, en fonction du stock disponible...
+-->

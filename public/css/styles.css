@@ -1,0 +1,227 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; }
+
+body {
+  font: 13px Helvetica, Arial; }
+
+form {
+  background: #000;
+  padding: 3px;
+  position: fixed;
+  bottom: 0;
+  width: 100%; }
+
+form input {
+  border: 0;
+  padding: 12px;
+  width: 88%; }
+
+form button {
+  width: 11.5%;
+  background-color: #ddd;
+  border: none;
+  padding: 12px;
+  float: right; }
+
+ul, li {
+  list-style: outside none none; }
+
+#messages {
+  list-style-type: none;
+  margin: 0;
+  padding: 0; }
+
+#messages li {
+  padding: 5px 10px; }
+
+#messages li:nth-child(odd) {
+  background: #eee; }
+
+#messages {
+  overflow: auto;
+  position: absolute;
+  width: 100%; }
+
+#whois-online {
+  background-color: #bbb;
+  color: white;
+  font-weight: bold;
+  height: auto;
+  padding: 10px;
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 11%; }
+
+#typing-info .inside-text {
+  background-color: grey;
+  bottom: 45px;
+  color: white;
+  font-size: 15px;
+  font-weight: bold;
+  height: 40px;
+  padding: 10px;
+  position: fixed;
+  right: 0;
+  width: 250px; }
+
+.active-user {
+  background-color: grey;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  padding: 8px; }
+
+ul.tasks {
+  font-size: 16px;
+  margin-top: 22px;
+  width: 337px;
+  position: absolute;
+  top: 0; }
+  ul.tasks ul {
+    margin: 0; }
+  ul.tasks .button {
+    display: block; }
+
+.rooms {
+  background-color: #eee;
+  height: 600px;
+  list-style: outside none none;
+  margin-left: auto;
+  margin-right: auto;
+  right: 0;
+  width: 1000px;
+  z-index: -1; }
+  .rooms li.room {
+    border: 1px dotted gray;
+    display: inline-block;
+    height: 298px;
+    position: relative;
+    width: 49.5%; }
+    .rooms li.room#subnet-1 {
+      /*background-color: #98d0ff;*/ }
+    .rooms li.room#subnet-2 {
+      /*background-color: #ff98f7;*/ }
+    .rooms li.room#subnet-3 {
+      /*background-color: #feffad;*/ }
+    .rooms li.room#subnet-4 {
+      /*background-color: #f8cd89;*/ }
+    .rooms li.room ul.printers {
+      display: block;
+      float: none;
+      height: 60%;
+      margin: auto;
+      position: absolute;
+      right: 0;
+      top: 211px;
+      width: 21%;
+      z-index: 5; }
+      .rooms li.room ul.printers li.printer {
+        background-image: url("/images/printers.png");
+        height: 70px;
+        list-style: outside none none;
+        margin: 3%;
+        width: 70px; }
+        .rooms li.room ul.printers li.printer.working {
+          background-position: 0px center; }
+        .rooms li.room ul.printers li.printer.outOfPaper {
+          background-position: 140px center; }
+        .rooms li.room ul.printers li.printer.outOfInk {
+          background-position: 140px center; }
+        .rooms li.room ul.printers li.printer.crashed {
+          background-position: 210px center; }
+        .rooms li.room ul.printers li.printer.ipLost {
+          background-position: 70px center; }
+    .rooms li.room ul.cameras {
+      /*background-color: red;*/
+      display: block;
+      float: none;
+      height: auto;
+      left: 28px;
+      margin: auto;
+      position: absolute;
+      top: 217px;
+      width: 21%;
+      z-index: 5; }
+      .rooms li.room ul.cameras li.camera {
+        background-image: url("/images/cameras.png");
+        height: 66px;
+        list-style: outside none none;
+        margin: 3%;
+        width: 76px; }
+        .rooms li.room ul.cameras li.camera.working {
+          background-position: -77px center; }
+        .rooms li.room ul.cameras li.camera.fullDrive {
+          background-position: 154px center; }
+        .rooms li.room ul.cameras li.camera.crashed {
+          background-position: 231px center; }
+        .rooms li.room ul.cameras li.camera.ipLost {
+          background-position: 77px center; }
+    .rooms li.room ul.phones {
+      bottom: 0;
+      display: block;
+      float: none;
+      height: 24%;
+      margin: auto;
+      position: absolute;
+      left: 204px;
+      z-index: 5; }
+      .rooms li.room ul.phones li.phone {
+        background-image: url("/images/phones.png");
+        height: 44px;
+        list-style: outside none none;
+        width: 66px; }
+        .rooms li.room ul.phones li.phone.working {
+          background-position: 0px center; }
+        .rooms li.room ul.phones li.phone.incomingCall {
+          background-position: -67px center; }
+        .rooms li.room ul.phones li.phone.crashed {
+          background-position: 133px center; }
+        .rooms li.room ul.phones li.phone.ipLost {
+          background-position: 66px center; }
+    .rooms li.room ul.computers {
+      display: block;
+      float: none;
+      margin: auto;
+      position: relative;
+      width: 52%;
+      top: 25px; }
+      .rooms li.room ul.computers li.computer {
+        background-image: url("/images/computers.png");
+        display: inline-block;
+        height: 59px;
+        list-style: outside none none;
+        margin: 3%;
+        width: 63px;
+        position: absolute; }
+        .rooms li.room ul.computers li.computer.used {
+          background-position: 63px center; }
+        .rooms li.room ul.computers li.computer#computer-1 {
+          left: 0px;
+          top: 0px; }
+        .rooms li.room ul.computers li.computer#computer-2 {
+          left: 160px;
+          top: 0px; }
+        .rooms li.room ul.computers li.computer#computer-3 {
+          left: 80px;
+          top: 45px; }
+        .rooms li.room ul.computers li.computer#computer-4 {
+          left: 0px;
+          top: 105px; }
+        .rooms li.room ul.computers li.computer#computer-5 {
+          left: 160px;
+          top: 105px; }
+        .rooms li.room ul.computers li.computer span.hostname {
+          display: block;
+          position: relative;
+          text-align: center;
+          top: -20px;
+          font-weight: bold;
+          width: 100%; }
+
+ul.orders, ul.items {
+  margin: 0; }
+
+/*# sourceMappingURL=styles.css.map */

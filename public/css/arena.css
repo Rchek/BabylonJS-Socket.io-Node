@@ -1,0 +1,159 @@
+#character , .bot{
+	left:190px;
+    position: absolute;
+    top: 210px;
+	z-index:2;
+	width: 40px;
+	height: 40px;
+	
+}
+
+#character[data-charname="charac-one"],
+.bot[data-charname="charac-one"] { 
+background: url('character3.png') no-repeat;
+}
+
+#character[data-charname="charac-two"],
+.bot[data-charname="charac-two"]{ 
+background: url('character1.png') no-repeat;
+}
+#character[data-charname="charac-three"],
+.bot[data-charname="charac-three"]{ 
+background: url('character2.png') no-repeat;
+}
+#character[data-charname="charac-four"],
+.bot[data-charname="charac-four"]{ 
+background: url('character5.png') no-repeat;
+}
+#character[data-charname="charac-five"],
+.bot[data-charname="charac-five"]{ 
+background: url('character4.png') no-repeat;
+}
+
+.scene{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    width: 410px;
+	z-index:1;
+}
+
+.corner-collisions{
+  height:0px;
+  position: absolute;
+}
+
+.background-item{
+  z-index: -1;
+  position: relative;
+}
+
+.background-item{
+  #f00;
+}
+
+img#background  { -webkit-blend-mode: multiply; }
+
+.wall.switch {
+   background: url('../sprites/switch.png') no-repeat;
+   width:50px;
+   height:50px;
+   position:absolute;
+   left:180px;
+   top:205px;
+   opacity:1;
+   z-index:-1;
+}
+
+.switch#off{
+ background-position: 0px 0px;
+}
+
+.switch#on{
+ background-position: -50px 0px;
+}
+
+.wall.wall-0 {
+     left: -156px;
+    position: absolute;
+    top: -453px;
+}
+
+.wall{
+opacity:0;
+}
+
+.wall.wall-1 {
+    left: -33px;
+    position: absolute;
+    top: -564px;
+}
+
+
+.wall.wall-2 {
+    left: 237px;
+    position: absolute;
+    top: -566px;
+}
+
+.wall.wall-3 {
+    left: 361px;
+    position: absolute;
+    top: -455px;
+}
+
+.wall.wall-4 {
+      left: -155px;
+    position: absolute;
+    top: -186px;
+}
+
+.wall.wall-5 {
+	    left: -30px;
+    position: absolute;
+    top: -55px;
+}
+
+.wall.wall-6 {
+left: 235px;
+    position: absolute;
+    top: -55px;
+ 
+}
+
+.wall.wall-7 {
+ left: 360px;
+    position: absolute;
+    top: -190px;
+}
+
+#character.front-right, .bot.front-right { background-position: 0px 0px;}
+#character.front-stand,.bot.front-stand { background-position: -40px 0px;}
+#character.front-left,.character.front-left { background-position: -80px 0px;}
+ 
+#character.left-right,.bot.left-right { background-position: 0px -40px;}
+#character.left-stand,.bot.left-stand { background-position: -40px -40px;}
+#character.left-left,.bot.left-left  { background-position: -80px -40px;}
+ 
+#character.right-right,.bot.right-right  { background-position: -80px -80px;}
+#character.right-stand,.bot.right-stand { background-position: -40px -80px;}
+#character.right-left,.bot.right-left { background-position: -0px -80px;}
+ 
+#character.back-right,.bot.back-right { background-position: 0px -120px;}
+#character.back-stand,.bot.back-stand { background-position: -40px -120px;}
+#character.back-left,.bot.back-left { background-position: -80px -120px; }
+
+span.label {
+    background-color: grey;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    padding: 3px 10px 5px;
+    position: relative;
+    top: -29px;
+}
+
+.bot span.label {
+	background-color: #ddd;
+}

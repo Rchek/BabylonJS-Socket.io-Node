@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="utf-8"/>
+    <title>Babylon - Getting Started</title>
+    <!--- link to the last version of babylon --->
+ 
+	
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+	
+    <style>
+        html, body {
+            overflow: hidden;
+            width   : 100%;
+            height  : 100%;
+            margin  : 0;
+            padding : 0;
+        }
+        #renderCanvas {
+            width   : 100%;
+            height  : 100%;
+            touch-action: none;
+        }
+    </style>
+</head>
+<body>
+ test
+ 
+</body>
+<script>
+	var currentKey;          //records the current key pressed
+	var TimerWalk; 
+		
+	//Forward or backward
+	var Firstkey=false
+	//Right or left
+	var SecondKey=false;;
+	//History of keys;
+	var history;
+	var charSpeed=50;
+	$(document).keydown(function(e) {
+	console.log("the current key DOWN is "+ e.keyCode);
+	//First key second key
+	//One key at a time...
+	if (!Firstkey && (e.keyCode==104 || e.keyCode==101 )) {   
+			//set the currentKey to the key that is down
+			Firstkey = e.keyCode;
+		  //execute character movement function charWalk('direction')
+			  switch(e.keyCode) {
+				case 104: charWalk('up');    break;	
+				case 101: charWalk('down');  break;
+			  } 
+ 	
+	}
+	
+	//One key at a time...
+	if (!SecondKey && (e.keyCode==102 || e.keyCode==100 )) {   
+			//set the currentKey to the key that is down
+			SecondKey = e.keyCode;
+		  //execute character movement function charWalk('direction')
+ 
+			   switch(e.keyCode) {
+				case 102: charWalk('right'); break;
+				case 100: charWalk('left');  break;
+			  } 	  	
+	}
+});
+		
+		//KeyUp Function
+		$(document).keyup(function(e){
+		 clearInterval(TimerWalk);
+		console.log("release this key " + e.keyCode );
+			//don't stop the walk if the player is pushing other buttons
+			//only stop the walk if the key that started the walk is released
+			if (e.keyCode == Firstkey) {
+			  //set the currentKey to false, this will enable a new key to be pressed
+			  Firstkey = false;
+			}
+			else if(e.keyCode == Firstkey){
+			SecondKey = false;
+			}
+		});
+		
+		
+//Character Walk Function
+function charWalk(dir) {
+    //adjust from lang to code
+    if (dir == 'up') dir = 'front';
+    if (dir == 'down') dir = 'back';
+ 
+	lastDirection=dir;
+    //move the character
+    processWalk(dir);
+    //set the interval timer to continually execute the function that moves the character
+    TimerWalk = setInterval(function() {
+			console.log("in interval ");
+			processWalk(dir);
+ 
+		} 
+		,charSpeed);
+}
+
+ 
+ 
+
+function processWalk(dir) {
+	// console.log("processWalk running with key... " + currentKey );
+	 /*
+	if(!currentKey){
+		clearInterval(TimerWalk);
+		console.log("stop all");
+		$(document).keyup();
+		//charSpeed=10000000;
+	 }
+ */
+	switch(dir) {
+	case "front":
+	console.log("front  of processWalk ");
+	break;
+	case "back":
+	console.log("back of processWalk");
+	break;
+	case "right":
+	console.log("right  of processWalk");
+	break;
+	case "left":
+	console.log("left of processWalk");
+	break;
+      }
+}
+	
+</script>
+</html>

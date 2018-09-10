@@ -1,0 +1,173 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO Rooms</title>
+	<link rel="stylesheet" type="text/css" href="./css/styles.css"  >
+	<!-- Include foundation 6 -->
+	<link rel="stylesheet" type="text/css" href="css/foundation.css" />
+    <link rel="stylesheet" type="text/css" href="css/app.css" />
+  </head>
+  <body>
+	<!-- Map / Rooms -->
+	<ul class="rooms">
+		<li class="room" id="subnet-1">
+			<ul class="computers">
+				<li class="computer" id="computer-1" data-ip="172.16.1.1">
+				<li class="computer" id="computer-2" data-ip="172.16.1.2">
+				<li class="computer" id="computer-3" data-ip="172.16.1.3">
+				<li class="computer" id="computer-4" data-ip="172.16.1.4">
+				<li class="computer" id="computer-5" data-ip="172.16.1.5">
+			</ul>
+			<ul class="cameras">
+				<li class="camera  working" id="cam-1"  data-ip="172.16.1.6"></li>
+			</ul>
+			<ul class="printers">
+				<li class="printer working" id="printer-1"  data-ip="172.16.1.10"></li>
+			</ul>
+			<ul class="phones">
+				<li class="phone  working" id="phone-1" data-ip="172.16.1.11"></li>
+			</ul>
+		</li>
+		<li class="room" id="subnet-2">
+			<ul class="computers">
+				<li class="computer" id="computer-1" data-ip="172.16.2.1">
+				<li class="computer" id="computer-2" data-ip="172.16.2.2">
+				<li class="computer" id="computer-3" data-ip="172.16.2.3">
+				<li class="computer" id="computer-4" data-ip="172.16.2.4">
+				<li class="computer" id="computer-5" data-ip="172.16.2.5">
+			</ul>
+			<ul class="cameras">
+				<li class="camera working" id="cam-2" data-ip="172.16.2.6"></li>
+			</ul>
+			<ul class="printers">
+				<li class="printer working" id="printer-1" data-ip="172.16.2.10"></li>
+			</ul>
+			<ul class="phones">
+				<li class="phone  working" id="phone-2" data-ip="172.16.2.11"></li>
+			</ul>
+		</li>
+		<li class="room" id="subnet-3">
+			<ul class="computers">
+				<li class="computer" id="computer-1" data-ip="172.16.3.1">
+				<li class="computer" id="computer-2" data-ip="172.16.3.2">
+				<li class="computer" id="computer-3" data-ip="172.16.3.3">
+				<li class="computer" id="computer-4" data-ip="172.16.3.4">
+				<li class="computer" id="computer-5" data-ip="172.16.3.5">
+			</ul>
+			<ul class="cameras">
+				<li class="camera  working" id="cam-3" data-ip="172.16.3.6"></li>
+			</ul>
+			<ul class="printers">
+				<li class="printer  working" id="printer-3" data-ip="172.16.3.10"></li>
+			</ul>
+			<ul class="phones">
+				<li class="phone working" id="phone-3" data-ip="172.16.3.11"></li>
+			</ul>
+		</li>
+		<li class="room" id="subnet-4">
+			<ul class="computers">
+				<li class="computer" id="computer-1" data-ip="172.16.4.1">
+				<li class="computer" id="computer-2" data-ip="172.16.4.2">
+				<li class="computer" id="computer-3" data-ip="172.16.4.3">
+				<li class="computer" id="computer-4" data-ip="172.16.4.4">
+				<li class="computer" id="computer-5" data-ip="172.16.4.5">
+			</ul>
+			<ul class="cameras">
+				<li class="camera working" id="cam-4" data-ip="172.16.4.6"></li>
+			</ul>
+			<ul class="printers">
+				<li class="printer working" id="printer-1" data-ip="172.16.4.10"></li>
+			</ul>
+			<ul class="phones">
+				<li class="phone working" id="phone-4" data-ip="172.16.4.11"></li>
+			</ul>
+		</li>
+  </ul>
+  <ul class="tasks">
+  </ul>
+  	<div id="typing-info" /> </div>
+  <script src="/socket.io/socket.io.js"  ></script>
+  <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+  <script>
+    var getEvents=true;
+	var socket = io();
+	// var nickname=prompt("what is your nickname ? ");
+	//socket.emit('newuser' , nickname);
+	var mySocketId="none";
+	//When I load the page, I request an update of the rooms...
+	socket.emit('roomRequest' , name);
+	//Add user to the list
+	socket.on('update-users',function(arrayOfUsers){
+	console.log("update the users...");
+
+	//Add user to the list
+	//Erase arrayOfUsers
+	//$('#whois-online').html("");
+	//Remove all of the used computers...
+	//console.log("remove all classes " );
+	$("ul.rooms li.room ul.computers li").removeClass("used");
+	$("ul.rooms li.room ul.computers li").html("");
+	
+	for(var i=0;i<=arrayOfUsers.users.length-1;i++){
+		//console.log("new user is " + arrayOfUsers[i]);
+		//Find the right subnet
+		var subnetNumber=arrayOfUsers.users[i].subnetNumber;
+		var hostNumber=arrayOfUsers.users[i].hostNumber;
+		var hostName=arrayOfUsers.users[i].nickname;
+		 console.log("subnet is " + subnetNumber);
+		 console.log("Computer number is " + hostNumber);
+		 console.log("Hostname  is " + hostName);
+		$("#subnet-"+subnetNumber+" ul.computers li#computer-"+hostNumber).addClass("used").append($("<span class='hostname'>").text(hostName));
+	} 
+	});
+	
+	socket.on("network-update", function(pickedObj){
+	 //console.log("an update of the network. with " + JSON.stringify(pickedObj));
+	 //console.log("possible actions are  " + JSON.stringify(pickedObj[3][0]));
+	 //I append the task and the actions
+	var actionsTemplate="<ul class='possible-actions'>";
+	for(var i=0 ; i<=pickedObj[3].length-1 ; i++){
+			actionsTemplate+="<li class='action button alert round' data-ip='"+pickedObj[1] +"'>"+pickedObj[3][i]+"</li>";
+	}
+	actionsTemplate+="<ul>";
+	//To make sure I get only one event...
+	if(getEvents){
+		$("ul.tasks").append("<li class='task callout alert' data-event='"+pickedObj[2]+"' data-expected-action='"+pickedObj[4]+"' ><span class='task-label'>"+pickedObj[0] + " with IP " + pickedObj[1] +" : "+ pickedObj[2] + "</span><br/><br/>" + actionsTemplate + "</li>" );
+		console.log("number of children is now " + $("ul.tasks li.task").length );
+		
+		 //I add the "event related" class of the target to update the icon
+		$('[data-ip~="'+ pickedObj[1]+'"]').addClass(pickedObj[2]);
+		
+		 // getEvents=false;
+		}
+	});
+	
+	$('body').on('click', 'li.action',function(e){
+		//console.log("I clicked on the action..." + $(this).text() + " for the IP " +$(this).data("ip") );
+		var targetIp=$(this).data("ip");
+		var expectedAction=$(this).parent().parent().data("expected-action") ;
+		var parentEvent=$(this).parent().parent().data("event") ;
+		
+		if($(this).text() == expectedAction){
+		// console.log("thats the right action, ready to send the command to the server"); 
+		//Remove the elemtn from the DOM
+		$(this).parent().parent().remove();
+		 
+		//I remove the "event related" class of the target
+		$('[data-ip~="'+ targetIp+'"]').removeClass(parentEvent);
+		getEvents=true;
+		}
+		
+		//Send only if action matches event...
+		//console.log("the event is " + $(this).parent().parent().data("event") );
+		//console.log("the expected action  is " + $(this).parent().parent().data("expected-action") );	
+	});
+	
+	//What I get from the TYPING function 
+	socket.on('typing',function(msg){
+		$("#typing-info").html("<div class='inside-text'>"+msg+"</div>");
+	
+	});
+  </script>
+  </body>
+</html>
