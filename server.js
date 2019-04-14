@@ -42,7 +42,6 @@ function pickEvent(){
 	var randomIpIndex=Math.round( Math.random()*(tableIps[keysOfDevices[deviceRandom]].length -1));
 	pickedIp=tableIps[keysOfDevices[deviceRandom]][randomIpIndex].adress;
 	var expectedAction=devicesEventsActions[pickedDevice][0].expectedActions[actionRandom];
-	//console.log("\nThe  "+pickedDevice+  " with the IP " + pickedIp+ "  Must " +  pickedEvent + " so the expected action is " + expectedAction);
 	
 	var possibleActions=devicesEventsActions[pickedDevice][1].actions;
 	var pickedObj=[pickedDevice, pickedIp ,pickedEvent , possibleActions,expectedAction];
@@ -161,9 +160,7 @@ io.on('connection' , function(socket){
 			//host prefix
 			//Assign Ip adress, Nickname, and SocketId
 			usersObject.users[usersObject.users.length]={nickname:nickname, socketId:socket.id , ipadress:ipToAssign , subnetNumber:ipToAssign.slice(7, 8) , hostNumber:ipToAssign.slice(-1) , xPosition:190 , yPosition:210, charName:charName, orientation:"stand" , colorR:babylonColorR, colorV:babylonColorV, colorB:babylonColorB , xBabylon:0, zBabylon:0, yBabylon:0,yBabylonRotation:0};	
-			console.loog
 			io.emit("newuser", nickname);
-			console.log("now update the users");
 			io.emit("update-users" , usersObject);
 		}
 		else{
@@ -213,20 +210,17 @@ io.on('connection' , function(socket){
 	});
 	//When A Private message is sent from a client
 	socket.on("sendPM",function(pm){
-		console.log("the PM is " + pm);
 		var PM_dest=pm[0]+" ::: " + pm[1] ;
 		for(var j=0 ; j<=usersObject.users.length-1 ; j++){
 			if(usersObject.users[j].nickname==pm[2] ){
 				destinationSocketId= usersObject.users[j].socketId;
 			}
-			//console.log("the user is " + usersObject.users[j].nickname+ " had the id " + usersObject.users[j].socketId);
 		}
 		//Find socket id of destination
 		io.to(destinationSocketId).emit('sendPM', PM_dest);
 	});
 	
 	socket.on('chat message', function(msg){
-	console.log( msg[1] +  ' saying ' + msg[0]);
 	//send a message to everyone
 	io.emit('chat message',msg);
 	});
@@ -247,10 +241,8 @@ io.on('connection' , function(socket){
 	io.emit("update-positions", usersObject);
 	});
 	
-	
 	//When a babylon sphere is moving
 	socket.on("babylonMoving", function(obj){
-
 	//je parcours le tableau un première fois pour voir si le nickname n'est pas déjà pris...
 	for(var f=0 ; f<=usersObject.users.length-1;f++){
 
