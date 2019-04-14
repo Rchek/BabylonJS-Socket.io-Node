@@ -129,7 +129,6 @@ app.get('/customer', function(req, res) {
 io.on('connection' , function(socket){
 
 	io.emit("loadModel", "mess");
-	console.log("just emit the loadModel");
 	//send a message to everyone
 	socket.on('newuser', function(nickname){
 	console.log("new user -----");
@@ -169,15 +168,12 @@ io.on('connection' , function(socket){
 		}
 		else{
 			var errorObj={userData:[{nickname:nickname, socketId:socket.id}]};
-			//var errorMessage=(!nicknameValid) ? "Sorry, nickname already takem":"Sorry, no more ip available";
-			//errorObj.userData[0].message=errorMessage;
 			errorObj.userData[0].message=(!nicknameValid) ? "Sorry, nickname already taken":"Sorry, the room is full (no more ip available)";
 			io.to( socket.id).emit('roomError', errorObj);
 		}
 	});
 	
 	socket.on('disconnect', function(info){
-	//console.log(info + ' disconnected');
 	//io.emit("disconnect", nickname + " disconnected");
 	});
 	socket.on('roomRequest', function(){
@@ -187,9 +183,7 @@ io.on('connection' , function(socket){
 	
 	socket.on('user-gone', function(goneObj){	
 	
-	io.emit("user-gone", goneObj.nickname);
-	console.log("this user has just gone... " + goneObj.nickname);
-	//console.log("Show me adresses status  " + JSON.stringify(tableIps.computers )); 	
+	io.emit("user-gone", goneObj.nickname);	
 	//Remove nickname from the users, but only if it has a scket id...
 	for (var z=0;z<=usersObject.users.length-1;z++){
 			if(usersObject.users[z].socketId==goneObj.socketId ){
@@ -208,9 +202,7 @@ io.on('connection' , function(socket){
 				}
 			}
 	}
-	
-	// console.log("what do the adresse look like now " + JSON.stringify(tableIps.computers) );
-	
+ 
 	//update users, so I can remove the one who disconnected
 	io.emit("update-users" , usersObject);
 	}); 
@@ -242,7 +234,6 @@ io.on('connection' , function(socket){
 	io.emit('update-stock',stocks);
 	//When a character is moving 
 	socket.on("characterMoving", function(obj){
-	console.log("character moving  with " + JSON.stringify(obj));
 	//je parcours le tableau un première fois pour voir si le nickname n'est pas déjà pris...
 	for(var f=0 ; f<=usersObject.users.length-1;f++){
 			if(usersObject.users[f].charName==obj.charId){
@@ -259,13 +250,11 @@ io.on('connection' , function(socket){
 	
 	//When a babylon sphere is moving
 	socket.on("babylonMoving", function(obj){
-	//console.log("character moving  with " + JSON.stringify(obj));
+
 	//je parcours le tableau un première fois pour voir si le nickname n'est pas déjà pris...
 	for(var f=0 ; f<=usersObject.users.length-1;f++){
-	//console.log("nickname of person moing is " + obj.nickname);
-	//console.log("current person in the loop is  " + usersObject.users[f].nickname);
+
 			 if(usersObject.users[f].nickname==obj.nickname){
-				//console.log("I must update data for " +usersObject.users[f].charName + " who has the id " + obj.charId );
 				//Update the data
 				usersObject.users[f].xBabylon=obj.xBabylon;
 				usersObject.users[f].zBabylon=obj.zBabylon;
@@ -278,8 +267,3 @@ io.on('connection' , function(socket){
 	io.emit("update-positions", usersObject);
 	});
 });
-/*
-http.listen(3000, function(){
-  console.log('listening on *:3000');
-});
-*/

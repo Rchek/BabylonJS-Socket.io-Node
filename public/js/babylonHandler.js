@@ -96,8 +96,6 @@ window.addEventListener('DOMContentLoaded', function() {
     screenLoader.load();
 	
 	screenLoader.onFinish = function( ) {
-	//console.log("how many objects " + scene.meshes.length);
-    //console.log("screen added ");
 	screen=scene.meshes[scene.meshes.length-1];
 	screen.material = new BABYLON.StandardMaterial("texture1", scene);
 	screen.material.wireframe = true;
@@ -119,7 +117,7 @@ window.addEventListener('DOMContentLoaded', function() {
     cctv.material.diffuseColor = new BABYLON.Color3(240, 127, 94);
 
 	cctv.position=new BABYLON.Vector3(2,2,2);
-		console.log("CCTV positio " + cctv.position);
+		console.log("CCTV position " + cctv.position);
 	}
 	
 	//CCTV RAY
@@ -147,20 +145,14 @@ window.addEventListener('DOMContentLoaded', function() {
     originalMesh = loader.addMeshTask('sphere-', "", "./obj/", "stardustModelMergedPivot.obj");
     loader.load();
     loader.onFinish = function(originalMesh) {
-	//console.log("how many objects " + scene.meshes.length);
-		console.log("loader finish");
 		for(var h=0;h<=scene.meshes.length-1;h++){
-			console.log("name of mesh is " + scene.meshes[h].name);
 			if(scene.meshes[h].name=="StardustModel"){
 			stardustIndex=h;
-			console.log("stardustIndex is " + stardustIndex);
 			}
 		}
         //The archetype model become the character used by the player...
-		console.log("name of the mesh " + scene.meshes[stardustIndex].name);
         mainSphere = scene.meshes[stardustIndex];
         mainSphere.name = nickname;
-		console.log("nickname is " + mainSphere);
         socket.emit('newuser', nickname);
     }
 
@@ -184,10 +176,6 @@ socket.on('loadModel', function(mess) {
 });
 //Add users
 socket.on('update-users', function(arrayOfUsers) {
-   //console.log("show me mesh scene " + JSON.stringify(scene.meshes));
-   //var lengthofMesh = scene.meshes.length - 1;
-   console.log("KEEP USER " + nickname);
-
    //Index 0 for ground, Index 1 for main character...
    //SO I pop until their's only the mnain elements on the scene
    while (scene.meshes.length > stardustIndex+1) {
@@ -198,7 +186,6 @@ socket.on('update-users', function(arrayOfUsers) {
    for (var i = 0; i <= arrayOfUsers.users.length - 1; i++) {
         //if current user is nickname, create sphere,
         if (arrayOfUsers.users[i].nickname == nickname) {
-            console.log("babylon color gives" + arrayOfUsers.users[i].nickname);
             mySocketId = arrayOfUsers.users[i].socketId;
             mainSphere.position.z = arrayOfUsers.users[i].zBabylon;
             mainSphere.position.x = arrayOfUsers.users[i].xBabylon;
@@ -209,10 +196,6 @@ socket.on('update-users', function(arrayOfUsers) {
             mainSphere.material.diffuseColor = new BABYLON.Color3(arrayOfUsers.users[i].colorR, arrayOfUsers.users[i].colorV, arrayOfUsers.users[i].colorB);
             camera.radius = 5;
 			camera.target = mainSphere.position;
-			//camera.setTarget(mainSphere.position);
-			//camera.lockedtarget=mainSphere;
-			console.log("name of sphere is "  +mainSphere.name);
-			
 			//Add name on top of character
 			stardustLabelTexture = new BABYLON.DynamicTexture("dynamic texture", 200, scene, true);
 			dynamicMaterialStardust = new BABYLON.StandardMaterial('mat', scene);
@@ -225,9 +208,7 @@ socket.on('update-users', function(arrayOfUsers) {
 			stardustNamePlaneLabel.scaling.y=0.5;
 			stardustNamePlaneLabel.scaling.z=0.1;
 			stardustNamePlaneLabel.position.y=1.8;
-			 //stardustNamePlaneLabel.rotation.y+=0.1;
-			//console.log("SIZE IS " + stardustNamePlaneLabel.getSize());
-			 var text =arrayOfUsers.users[i].nickname;
+			var text =arrayOfUsers.users[i].nickname;
 			 
 			stardustNamePlaneLabel.rotation.y=3.2;
 			
@@ -246,8 +227,6 @@ socket.on('update-users', function(arrayOfUsers) {
 			context.fillText(text, size.width/2 - context.measureText(text).width/2, size.height/2);
 			
 			stardustNamePlaneLabel.parent=mainSphere;
-			//context.fillRect(0, 0,size.width/2, size.height/2);
-
 			stardustLabelTexture.update(true);
 			
         } else {
@@ -290,35 +269,40 @@ window.addEventListener("click", function (evt) {
    }  
 });
 
-
+var up_key_code=87;
+var down_key_code=83;
+var left_key_code=68;
+var right_key_code=65;
 //Keydown event, handling dirctions keys separately		
 $(document).keydown(function(e) {
-    //First key second key
-    //One key at a time...
-    if (!Firstkey && (e.keyCode == 104 || e.keyCode == 101)) {
+	console.log("justpressed a key " + e.keyCode);
+
+    if (!Firstkey && (e.keyCode == up_key_code || e.keyCode == down_key_code)) {
         //set the currentKey to the key that is down
         Firstkey = e.keyCode;
         //execute character movement function charWalk('direction')
+		//keys W and S for Up and Down
         switch (e.keyCode) {
-            case 104:
+            case up_key_code:
                 charWalk('up');
                 break;
-            case 101:
+            case down_key_code:
                 charWalk('down');
                 break;
         }
     }
     //One key at a time...
-    if (!SecondKey && (e.keyCode == 102 || e.keyCode == 100)) {
+	//keys A and D for Left and Right
+    if (!SecondKey && (e.keyCode == left_key_code || e.keyCode == right_key_code)) {
        // console.log("set sedone key");
         //set the currentKey to the key that is down
         SecondKey = e.keyCode;
         //execute character movement function charWalk('direction')
         switch (e.keyCode) {
-            case 102:
+            case left_key_code:
                 charWalk('right');
                 break;
-            case 100:
+            case right_key_code:
                 charWalk('left');
                 break;
         }
